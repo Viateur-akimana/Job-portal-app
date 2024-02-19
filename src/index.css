@@ -1,3 +1,9 @@
+
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +16,31 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+nav{
+  background-color: blue;
+  color: white;
+}
+.search{
+  display: flex;
+  padding: 13px;
+  gap: 9px;
+}
+
+
+.text{
+   font-size: small;
+
+}
+.text span{
+  font-size: smaller;
+}
+.icon{
+  max-width: 90px;
+  border: 2px solid rgb(21, 202, 21);
+  border-radius: 50%;
+  padding: 2px;
+  color: white;
+
 }
