@@ -5,6 +5,7 @@
   box-sizing: border-box;
 }
 body {
+/* background-image: url('../public/last.jpg'); */
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
@@ -19,7 +20,7 @@ code {
 }
 
 nav{
-  background-color: blue;
+  background-color: rgb(47, 49, 179);
   color: white;
 }
 .search{
@@ -36,11 +37,25 @@ nav{
 .text span{
   font-size: smaller;
 }
+
 .icon{
-  max-width: 90px;
+  font-size: 1.5em;
+ 
   border: 2px solid rgb(21, 202, 21);
   border-radius: 50%;
   padding: 2px;
   color: white;
 
 }
+.navbar{
+  display: flex;
+
+
+}
+
+.form-container{
+  max-width: 400px;
+  margin: auto;
+  text-align: center;
+}
+

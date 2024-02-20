@@ -1,55 +1,100 @@
-import React, { useState } from 'react';
+// JobApplicationForm.js
 
-const ApplyForm = ({ job }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    resume: null
+import React, { useState } from "react";
+
+const JobApplicationForm = () => {
+  const [applicationData, setApplicationData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    resume: null,
+    coverLetter: "",
+    // Add more fields as needed
   });
 
-  const { name, email, resume } = formData;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setApplicationData({ ...applicationData, [name]: value });
+  };
 
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setApplicationData({ ...applicationData, resume: file });
+  };
 
-  const handleFileChange = e => setFormData({ ...formData, resume: e.target.files[0] });
-
-  const handleSubmit = e => {
+  const handleApplicationSubmit = (e) => {
     e.preventDefault();
-    // Create FormData object
-    const formDataObj = new FormData();
-    formDataObj.append('name', name);
-    formDataObj.append('email', email);
-    formDataObj.append('resume', resume); // Append resume file
-    // Implement job application submission functionality using API
-    console.log('Application Data:', formDataObj);
-    // Reset form fields
-    setFormData({
-      name: '',
-      email: '',
-      resume: null
-    });
+
+    // Create a FormData object to handle file uploads
+    const formData = new FormData();
+    formData.append("fullName", applicationData.fullName);
+    formData.append("email", applicationData.email);
+    formData.append("phone", applicationData.phone);
+    formData.append("resume", applicationData.resume);
+    formData.append("coverLetter", applicationData.coverLetter);
+
+    // Send a POST request to your backend to submit the job application
+    fetch("https://jobboard-0da3.onrender.com/api/job-applications", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Application submitted successfully:", data);
+        // You may want to add a success message or redirect to a confirmation page
+      })
+      .catch((error) => console.error("Error submitting application:", error));
   };
 
   return (
-    <div className="apply-form">
-      <h3>Apply for {job.title}</h3>
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Name</label>
-          <input type="text" name="name" value={name} onChange={onChange} required />
-        </div>
-        <div className="form-group">
-          <label>Email</label>
-          <input type="email" name="email" value={email} onChange={onChange} required />
-        </div>
-        <div className="form-group">
-          <label>Resume</label>
-          <input type="file" name="resume" onChange={handleFileChange} required />
-        </div>
-        <button type="submit">Apply</button>
+    <div>
+      <h3>Job Application Form</h3>
+      <form onSubmit={handleApplicationSubmit}>
+        <label>Full Name:</label>
+        <input
+          type="text"
+          name="fullName"
+          value={applicationData.fullName}
+          onChange={handleInputChange}
+        />
+
+        <label>Email:</label>
+        <input
+          type="email"
+          name="email"
+          value={applicationData.email}
+          onChange={handleInputChange}
+        />
+
+        <label>Phone:</label>
+        <input
+          type="tel"
+          name="phone"
+          value={applicationData.phone}
+          onChange={handleInputChange}
+        />
+
+        <label>Resume:</label>
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx"
+          name="resume"
+          onChange={handleFileChange}
+        />
+
+        <label>Cover Letter:</label>
+        <textarea
+          name="coverLetter"
+          value={applicationData.coverLetter}
+          onChange={handleInputChange}
+        />
+
+        {/* Add more input fields for other application details as needed */}
+
+        <button type="submit">Submit Application</button>
       </form>
     </div>
   );
 };
 
-export default ApplyForm;
+export default JobApplicationForm;

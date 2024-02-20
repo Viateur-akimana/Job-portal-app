@@ -1,0 +1,16 @@
+.logo-container {
+    width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+
+.logo-image {
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+}
+
+.space {
+    margin-right: 5px;
+}

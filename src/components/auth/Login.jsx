@@ -1,35 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import "../../assets/css/styles.css";
+import AuthService from "../../AuthService.js";
+import { useNavigate } from "react-router-dom";
+const Login = ({ onLogin }) => {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const handleLogin = async () => {
+    try {
+      const response = await AuthService.login(username, password);
 
-const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+      if (response.data.success) {
+        // Authentication successful, set user role and trigger onLogin
+        const userRole = response.data.role; // Assuming your backend returns the user role
+        const profileName = response.data.Name;
+        const id = response.data.id;
+        console.log(id);
+        onLogin(userRole, profileName, id);
 
-  const { email, password } = formData;
-
-  const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  const onSubmit = async e => {
-    e.preventDefault();
-    console.log('Login Submit:', formData);
-    // Implement login functionality using API
+        // Store userRole in localStorage if needed
+        localStorage.setItem("userRole", userRole);
+        alert("Login Successful!");
+        navigate("/dashboard");
+      } else {
+        // Handle authentication failure (e.g., incorrect credentials)
+        setError("Invalid credentials");
+      }
+    } catch (error) {
+      // Handle other errors (e.g., network issues)
+      console.error("Error during login:", error);
+      setError("Error during login. Please try again later.");
+    }
   };
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
-      <form onSubmit={onSubmit}>
-        <div className="form-group">
-          <label>Email</label>
-          <input type="email" name="email" value={email} onChange={onChange} required />
+    <div className="container mt-5">
+      <div className="card border-primary margin-top">
+        <div className="card-header bg-primary text-white">
+          <h5 className="card-title">Login</h5>
         </div>
-        <div className="form-group">
-          <label>Password</label>
-          <input type="password" name="password" value={password} onChange={onChange} minLength="6" required />
+        <div className="card-body">
+          <div className="mb-3">
+            <label className="form-label">Username or Email:</label>
+            <input
+              type="username"
+              className="form-control"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Password:</label>
+            <input
+              type="password"
+              className="form-control"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary" onClick={handleLogin}>
+            Login
+          </button>
+          {error && <h3 className="text-danger text-size">{error}</h3>}
         </div>
-        <button type="submit">Login</button>
-      </form>
+      </div>
     </div>
   );
 };

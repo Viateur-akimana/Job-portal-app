@@ -1,6 +1,5 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./components/layout/Navbar";
 import Home from "./pages/Home";
 import LoginRegister from "./pages/LoginRegister";
 import CandidateDashboard from "./components/dashBoard/CandidateDashboard";
@@ -12,23 +11,24 @@ import Register from "./components/auth/Register";
 import JobList from "./components/job/JobList";
 import ApplyForm from "./components/job/ApplyForm";
 import JobForm from "./components/job/JobForm";
+import Navbar from "./components/layout/Navbar";
 
 const App = () => {
   return (
     <Router>
-      <Navbar />
+       <Navbar/>
       <Routes>
-        <Route path="/" component={Home} />
-        <Route path="/login" component={<Login />} />
-        <Route path="/register" component={<Register />} />
-        <Route path="/login-register" component={<LoginRegister />} />
-        <Route path="/candidate-dashboard" component={<CandidateDashboard />} />
-        <Route path="/employer-dashboard" component={<EmployerDashboard />} />
-        <Route path="/jobs" component={<JobList />} />
-        <Route path="/job/:id" component={<JobDetail />} />
-        <Route path="/post-job" component={<JobForm />} />
-        <Route path="/apply/:id" component={<ApplyForm />} />
-        <Route component={NotFound} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login-register" element={<LoginRegister />} />
+        <Route path="/candidate-dashboard" element={<CandidateDashboard />} />
+        <Route path="/employer-dashboard" element={<EmployerDashboard />} />
+        <Route path="/jobs" element={<JobList />} />
+        <Route path="/job/:id" element={<JobDetail />} />
+        <Route path="/post-job" element={<JobForm />} />
+        <Route path="/apply/:id" element={<ApplyForm />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
   );
