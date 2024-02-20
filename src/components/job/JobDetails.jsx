@@ -6,7 +6,7 @@ import "../../assets/css/styles.css";
 const JobDetailPage = () => {
   const { id } = useParams();
   const [job, setJob] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [applicationData, setApplicationData] = useState({
     name: "",
     email: "",
