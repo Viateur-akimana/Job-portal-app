@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import "../../assets/css/styles.css";
-import AuthService from "../../AuthService.js";
+import axios from "axios";
 import { Link } from "react-router-dom";
 
 const RegistrationForm = () => {
-  // const history = useHistory();
-  const [credentials, setCredentials] = useState({
+  const [data, setData] = useState({
     username: "",
+    email: "", // Added email field
     password: "",
     role: "",
   });
@@ -14,24 +14,21 @@ const RegistrationForm = () => {
   const [successMessage, setSuccessMessage] = useState(null);
 
   const handleChange = (e) => {
-    setCredentials({ ...credentials, [e.target.name]: e.target.value });
+    setData({ ...data, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await AuthService.register(
-        credentials.username,
-        credentials.password,
-        credentials.role
+      const response = await axios.post(
+        "http://localhost:3000/api/auth/register",
+        data
       );
 
-      if (response.success) {
+      if (response.data.success) {
         setSuccessMessage("Registration successful! You can now log in.");
-        alert("You can Login Now!");
         setError(null);
-        // Redirect to the login page after successful registration
       } else {
         setSuccessMessage(null);
         setError(
@@ -41,8 +38,8 @@ const RegistrationForm = () => {
       }
     } catch (error) {
       setSuccessMessage(null);
-      setError("Error during registration. Please try again ");
-      alert("Error during RegistrationForm");
+      setError("Error during registration. Please try again.");
+      console.log(error);
     }
   };
 
@@ -60,14 +57,27 @@ const RegistrationForm = () => {
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label" htmlFor="username">
-                Username or Email:
+                Username:
               </label>
               <input
-                type="username"
+                type="text"
                 className="form-control"
                 id="username"
                 name="username"
-                value={credentials.username}
+                value={data.username}
+                onChange={handleChange}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label" htmlFor="email">
+                Email:
+              </label>
+              <input
+                type="email"
+                className="form-control"
+                id="email"
+                name="email"
+                value={data.email}
                 onChange={handleChange}
               />
             </div>
@@ -80,25 +90,25 @@ const RegistrationForm = () => {
                 className="form-control"
                 id="password"
                 name="password"
-                value={credentials.password}
+                value={data.password}
                 onChange={handleChange}
               />
             </div>
 
             <div className="mb-3">
-              <label className="form-label">Job-Seeker OR Recruiter:</label>
+              <label className="form-label">Employer OR Candidate:</label>
               <select
                 className="form-control"
                 name="role"
                 id="role"
-                value={credentials.role}
+                value={data.role}
                 onChange={handleChange}
               >
                 <option value="" disabled>
                   -Select-
                 </option>
-                <option value="candidate">Job Seeker</option>
-                <option value="employer">Recruiter</option>
+                <option value="candidate">Candidate</option>
+                <option value="employer">Employer</option>
               </select>
             </div>
             <button type="submit" className="btn btn-primary">

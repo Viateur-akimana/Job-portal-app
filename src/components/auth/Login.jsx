@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "../../assets/css/styles.css";
 import AuthService from "../../AuthService.js";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
+
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -62,6 +63,9 @@ const Login = ({ onLogin }) => {
           <button className="btn btn-primary" onClick={handleLogin}>
             Login
           </button>
+          <Link to="/register" className="mt-3">
+              Not yet have an account? Click here to register.
+            </Link>
           {error && <h3 className="text-danger text-size">{error}</h3>}
         </div>
       </div>
