@@ -16,6 +16,7 @@ const JobForm = ({ employerId }) => {
   const navigate = useNavigate();
 
   const [formError, setFormError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -35,13 +36,13 @@ const JobForm = ({ employerId }) => {
 
     try {
       // Send a POST request to your backend to create a new job
-      const response = await axios.post("https://jobboard-0da3.onrender.com/api/jobs", jobData);
+      const response = await axios.post("http://localhost:3000/api/jobs/create", jobData);
 
-      if (!response.data) {
-        throw new Error("Failed to create job");
+      if (!response.data || response.data.error) {
+        throw new Error(response.data.error || "Failed to create job");
       }
 
-      alert("Job created successfully:", response.data);
+      setSuccessMessage("Job created successfully!");
       // Reset form data and error after successful submission
       setJobData({
         title: "",
@@ -53,9 +54,13 @@ const JobForm = ({ employerId }) => {
         employerId: employerId,
       });
       setFormError("");
-      // You may want to add a success message or redirect to job listings page
+      // Redirect to job listings page after a short delay
+      setTimeout(() => {
+        navigate('/job-listings');
+      }, 2000); // 2000 milliseconds = 2 seconds
     } catch (error) {
       console.error("Error creating job:", error.message);
+      setFormError("Failed to create job. Please try again.");
       // Handle the error, show a message to the user, etc.
     }
   };
@@ -72,6 +77,7 @@ const JobForm = ({ employerId }) => {
       <h3>Create a New Job</h3>
       <p>Your employerId during the Submission of Job is : {employerId}</p>
       {formError && <p style={{ color: "red" }}>{formError}</p>}
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       <form onSubmit={handleJobSubmit}>
         <TextField
           label="Title"

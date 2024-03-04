@@ -2,25 +2,26 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "../../assets/css/styles.css";
+
 const CandidateDashboard = ({ name }) => {
   const [profile, setProfile] = useState({});
   const [jobs, setJobs] = useState([]);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   useEffect(() => {
-    // Fetch candidate profile
     const fetchProfile = async () => {
       try {
-        const response = await axios.get("/api/candidate/profile"); // Update endpoint
+        const response = await axios.get("/api/candidate/profile");
         setProfile(response.data);
       } catch (error) {
         console.error("Error fetching profile:", error);
       }
     };
 
-    // Fetch available jobs
     const fetchJobs = async () => {
       try {
-        const response = await axios.get("/api/jobs"); // Update endpoint
+        const response = await axios.get("http://localhost:3000/api/jobs");
         setJobs(response.data);
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -30,6 +31,33 @@ const CandidateDashboard = ({ name }) => {
     fetchProfile();
     fetchJobs();
   }, []);
+
+  const handleFileChange = (e) => {
+    setResumeFile(e.target.files[0]);
+  };
+
+  const handleUpload = async () => {
+    if (!resumeFile) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("resume", resumeFile);
+
+    try {
+      const response = await axios.post("/api/jobs/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.data.fileName) {
+        setUploadSuccess(true);
+      }
+    } catch (error) {
+      console.error("Error uploading resume:", error);
+    }
+  };
 
   return (
     <div className="container margin-top">
@@ -58,6 +86,11 @@ const CandidateDashboard = ({ name }) => {
           </li>
         ))}
       </ul>
+
+      <h3>Upload Resume</h3>
+      <input type="file" onChange={handleFileChange} />
+      <button onClick={handleUpload}>Upload</button>
+      {uploadSuccess && <p>Resume uploaded successfully!</p>}
     </div>
   );
 };
