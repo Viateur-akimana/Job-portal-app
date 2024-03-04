@@ -1,6 +1,5 @@
-// JobApplicationForm.js
-
 import React, { useState } from "react";
+import axios from "axios";
 
 const JobApplicationForm = () => {
   const [applicationData, setApplicationData] = useState({
@@ -9,8 +8,10 @@ const JobApplicationForm = () => {
     phone: "",
     resume: null,
     coverLetter: "",
-    // Add more fields as needed
   });
+
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,33 +23,40 @@ const JobApplicationForm = () => {
     setApplicationData({ ...applicationData, resume: file });
   };
 
-  const handleApplicationSubmit = (e) => {
+  const handleApplicationSubmit = async (e) => {
     e.preventDefault();
-
-    // Create a FormData object to handle file uploads
+  
     const formData = new FormData();
     formData.append("fullName", applicationData.fullName);
     formData.append("email", applicationData.email);
     formData.append("phone", applicationData.phone);
     formData.append("resume", applicationData.resume);
     formData.append("coverLetter", applicationData.coverLetter);
-
-    // Send a POST request to your backend to submit the job application
-    fetch("https://jobboard-0da3.onrender.com/api/job-applications", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Application submitted successfully:", data);
-        // You may want to add a success message or redirect to a confirmation page
-      })
-      .catch((error) => console.error("Error submitting application:", error));
+  
+    try {
+      const response = await axios.post("http://localhost:3000/api/jobs/submit", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+  
+      setSuccessMessage("Application submitted successfully!");
+      setErrorMessage("");
+      console.log("Server response:", response.data); // Log the response data
+      window.location.href = "/confirmation";
+    } catch (error) {
+      setErrorMessage("Failed to submit application. Please try again.");
+      setSuccessMessage("");
+      console.error("Error submitting application:", error);
+    }
   };
+  
 
   return (
     <div>
       <h3>Job Application Form</h3>
+      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       <form onSubmit={handleApplicationSubmit}>
         <label>Full Name:</label>
         <input
@@ -88,8 +96,6 @@ const JobApplicationForm = () => {
           value={applicationData.coverLetter}
           onChange={handleInputChange}
         />
-
-        {/* Add more input fields for other application details as needed */}
 
         <button type="submit">Submit Application</button>
       </form>

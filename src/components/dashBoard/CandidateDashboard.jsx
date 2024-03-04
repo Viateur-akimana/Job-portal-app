@@ -45,7 +45,7 @@ const CandidateDashboard = ({ name }) => {
     formData.append("resume", resumeFile);
 
     try {
-      const response = await axios.post("/api/jobs/upload", formData, {
+      const response = await axios.post("http://localhost:3000/api/jobs/upload", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

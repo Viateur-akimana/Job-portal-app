@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField, Select, MenuItem } from "@mui/material";
+import { Button , TextField,Select, MenuItem} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -16,11 +16,16 @@ const JobForm = ({ employerId }) => {
   const navigate = useNavigate();
 
   const [formError, setFormError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [resumeFile, setResumeFile] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setJobData({ ...jobData, [name]: value });
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setResumeFile(file);
   };
 
   const handleJobSubmit = async (e) => {
@@ -35,32 +40,33 @@ const JobForm = ({ employerId }) => {
     }
 
     try {
-      // Send a POST request to your backend to create a new job
-      const response = await axios.post("http://localhost:3000/api/jobs/create", jobData);
+      // Create a FormData object to handle file uploads
+      const formData = new FormData();
+      formData.append("title", jobData.title);
+      formData.append("description", jobData.description);
+      formData.append("company", jobData.company);
+      formData.append("location", jobData.location);
+      formData.append("salary", jobData.salary);
+      formData.append("jobType", jobData.jobType);
+      formData.append("employerId", jobData.employerId);
+      formData.append("resume", resumeFile);
 
-      if (!response.data || response.data.error) {
-        throw new Error(response.data.error || "Failed to create job");
+      // Send a POST request to your backend to create a new job
+      const response = await axios.post("http://localhost:3000/api/jobs/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (!response.data) {
+        throw new Error("Failed to create job");
       }
 
-      setSuccessMessage("Job created successfully!");
-      // Reset form data and error after successful submission
-      setJobData({
-        title: "",
-        description: "",
-        company: "",
-        location: "",
-        salary: "",
-        jobType: "",
-        employerId: employerId,
-      });
-      setFormError("");
-      // Redirect to job listings page after a short delay
-      setTimeout(() => {
-        navigate('/job-listings');
-      }, 2000); // 2000 milliseconds = 2 seconds
+      alert("Job created successfully:", response.data);
+      // Redirect to job listings page or show a success message
+      navigate('/jobs');
     } catch (error) {
       console.error("Error creating job:", error.message);
-      setFormError("Failed to create job. Please try again.");
       // Handle the error, show a message to the user, etc.
     }
   };
@@ -77,7 +83,6 @@ const JobForm = ({ employerId }) => {
       <h3>Create a New Job</h3>
       <p>Your employerId during the Submission of Job is : {employerId}</p>
       {formError && <p style={{ color: "red" }}>{formError}</p>}
-      {successMessage && <p style={{ color: "green" }}>{successMessage}</p>}
       <form onSubmit={handleJobSubmit}>
         <TextField
           label="Title"
@@ -139,6 +144,13 @@ const JobForm = ({ employerId }) => {
           <MenuItem value="full-time">Full Time</MenuItem>
           <MenuItem value="work-from-home">Work from Home</MenuItem>
         </Select>
+        <label>Resume:</label>
+        <input
+          type="file"
+          accept=".pdf,.doc,.docx"
+          name="resume"
+          onChange={handleFileChange}
+        />
         <Button type="submit" variant="contained" color="primary">
           Create Job
         </Button>
