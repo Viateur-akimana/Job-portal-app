@@ -6,7 +6,7 @@ import "../../assets/css/styles.css";
 const JobDetailPage = () => {
   const { id } = useParams();
   const [job, setJob] = useState(null);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [applicationData, setApplicationData] = useState({
     name: "",
     email: "",
@@ -17,20 +17,22 @@ const JobDetailPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
+    const fetchJobDetails = async () => {
+      try {
+        const response = await fetch(`https://jobboard-0da3.onrender.com/api/jobs/${id}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch job details");
+        }
+        const data = await response.json();
+        setJob(data);
+      } catch (error) {
+        console.error("Error fetching job details:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (id) {
-      fetch(`https://jobboard-0da3.onrender.com/api/jobs/${id}`)
-        .then((response) => response.json())
-        .then((data) => setJob(data))
-        .catch((error) => console.error("Error fetching job details:", error));
-    }
+    fetchJobDetails();
   }, [id]);
 
   const handleGoBack = () => {
@@ -49,6 +51,10 @@ const JobDetailPage = () => {
     e.preventDefault();
 
     // Perform form validation here
+    if (!applicationData.name || !applicationData.email || !applicationData.mobile || !applicationData.resume) {
+      alert("Please fill in all fields.");
+      return;
+    }
 
     setSubmitting(true);
 
@@ -58,24 +64,18 @@ const JobDetailPage = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: applicationData.name,
-          email: applicationData.email,
-          mobile: applicationData.mobile,
-          resume: applicationData.resume,
-        }),
+        body: JSON.stringify(applicationData),
       });
 
-      if (response.ok) {
-        alert("Application submitted successfully");
-        // Optionally, you can redirect the user or show a success message
-        // Reload the job details to reflect the updated applications
-        fetchJobDetails();
-      } else {
-        alert("Application already Submitted:", response.statusText);
+      if (!response.ok) {
+        throw new Error("Failed to submit application");
       }
+
+      alert("Application submitted successfully");
+      // Optionally, you can redirect the user or show a success message
     } catch (error) {
       console.error("Error submitting application:", error);
+      alert("Failed to submit application. Please try again later.");
     } finally {
       setSubmitting(false);
     }
@@ -89,7 +89,11 @@ const JobDetailPage = () => {
         </Button>
         <h2 className="mb-4 margin-top">Job Details</h2>
       </div>
-      {job ? (
+      {loading ? (
+        <div className="d-flex justify-content-center align-items-center">
+          <CircularProgress />
+        </div>
+      ) : (
         <div className="card">
           <div className="card-body">
             <h3 className="card-title">{job.title}</h3>
@@ -128,6 +132,7 @@ const JobDetailPage = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                required
                 // Add any validation attributes as needed
               />
               <TextField
@@ -138,6 +143,7 @@ const JobDetailPage = () => {
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
+                required
                 // Add any validation attributes as needed
               />
 
@@ -151,10 +157,6 @@ const JobDetailPage = () => {
               </Button>
             </form>
           </div>
-        </div>
-      ) : (
-        <div className="d-flex justify-content-center align-items-center">
-          <CircularProgress />
         </div>
       )}
     </Container>

@@ -1,40 +1,39 @@
 import React, { useState } from "react";
 import "../../assets/css/styles.css";
-import AuthService from "../../AuthService.js";
-import { useNavigate,Link } from "react-router-dom";
+import axios from "axios";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = ({ onLogin }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
   const handleLogin = async () => {
     try {
-      const response = await AuthService.login(username, password);
-
-      if (response.data.success) {
-        // Authentication successful, set user role and trigger onLogin
-        const userRole = response.data.role; // Assuming your backend returns the user role
-        const profileName = response.data.Name;
-        const id = response.data.id;
-        console.log(id);
-        onLogin(userRole, profileName, id);
-
-        // Store userRole in localStorage if needed
-        localStorage.setItem("userRole", userRole);
-        alert("Login Successful!");
-        navigate("/dashboard");
+      const response = await axios.post('http://localhost:3000/api/auth/login', {
+        email: email,
+        password: password
+      });
+  
+      const token = response.data.token; // Extract JWT token from response
+  
+      if (token) {
+        // Store JWT token securely (e.g., in local storage)
+        localStorage.setItem('token', token);
+  
+        // Redirect user to home page or perform other actions
+        alert('Login Successful!');
+        navigate('/');
       } else {
-        // Handle authentication failure (e.g., incorrect credentials)
-        setError("Invalid credentials");
+        setError('Invalid credentials');
       }
     } catch (error) {
-      // Handle other errors (e.g., network issues)
-      console.error("Error during login:", error);
-      setError("Error during login. Please try again later.");
+      console.error('Error during login:', error);
+      setError('Error during login. Please try again later.');
     }
   };
-
+  
   return (
     <div className="container mt-5">
       <div className="card border-primary margin-top">
@@ -43,12 +42,12 @@ const Login = ({ onLogin }) => {
         </div>
         <div className="card-body">
           <div className="mb-3">
-            <label className="form-label">Username or Email:</label>
+            <label className="form-label">Email:</label>
             <input
-              type="username"
+              type="email"
               className="form-control"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="mb-3">
@@ -64,8 +63,8 @@ const Login = ({ onLogin }) => {
             Login
           </button>
           <Link to="/register" className="mt-3">
-              Not yet have an account? Click here to register.
-            </Link>
+            Not yet have an account? Click here to register.
+          </Link>
           {error && <h3 className="text-danger text-size">{error}</h3>}
         </div>
       </div>

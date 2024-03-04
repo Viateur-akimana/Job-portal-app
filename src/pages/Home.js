@@ -1,13 +1,11 @@
 import { CircularProgress, Container, Button, Typography } from '@mui/material';
-// import FeaturedJobListings from "./FeaturedJobListings";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-// import Navbar from '../components/layout/Navbar';
+
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
-  // Simulate an API call or any asynchronous operation
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);

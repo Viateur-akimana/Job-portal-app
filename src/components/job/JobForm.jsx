@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, TextField, Select, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const JobForm = ({ employerId }) => {
   const [jobData, setJobData] = useState({
@@ -8,7 +9,7 @@ const JobForm = ({ employerId }) => {
     description: "",
     company: "",
     location: "",
-    salary: "", // Corrected typo in the state variable name
+    salary: "",
     jobType: "",
     employerId: employerId,
   });
@@ -34,20 +35,13 @@ const JobForm = ({ employerId }) => {
 
     try {
       // Send a POST request to your backend to create a new job
-      const response = await fetch("https://jobboard-0da3.onrender.com/api/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(jobData),
-      });
+      const response = await axios.post("https://jobboard-0da3.onrender.com/api/jobs", jobData);
 
-      if (!response.ok) {
+      if (!response.data) {
         throw new Error("Failed to create job");
       }
 
-      const data = await response.json();
-      alert("Job created successfully:", data);
+      alert("Job created successfully:", response.data);
       // Reset form data and error after successful submission
       setJobData({
         title: "",

@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import "../../assets/css/styles.css";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 
-const RegistrationForm = () => {
+const Register = () => {
+  const navigate= useNavigate()
+ 
   const [data, setData] = useState({
     username: "",
     email: "", // Added email field
     password: "",
     role: "",
   });
-  const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
+  const [errors,setErrors] = useState({})
 
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
@@ -28,18 +30,25 @@ const RegistrationForm = () => {
 
       if (response.data.success) {
         setSuccessMessage("Registration successful! You can now log in.");
-        setError(null);
+        setErrors(null);
+        navigate('/login');
       } else {
         setSuccessMessage(null);
-        setError(
-          response.data.message ||
-            "Registration failed. Please check your information."
-        );
+        if (response.data.errors && response.data.errors.role) {
+          setErrors({ role: response.data.errors.role.message });
+        } else {
+          setErrors(
+            response.data.message ||
+              "Registration failed. Please check your information."
+          );
+        }
       }
     } catch (error) {
-      setSuccessMessage(null);
-      setError("Error during registration. Please try again.");
       console.log(error);
+      setSuccessMessage(null);
+      setErrors("Error during registration. Please try again.");
+    
+     
     }
   };
 
@@ -50,10 +59,8 @@ const RegistrationForm = () => {
           <h5 className="card-title">Registration</h5>
         </div>
         <div className="card-body">
-          {error && <h3 className="text-danger text-size">{error}</h3>}
-          {successMessage && (
-            <p className="text-success text">{successMessage}</p>
-          )}
+        {errors.general && <h3 className="text-danger text-size">{errors.general}</h3>}
+          {successMessage && <p className="text-success">{successMessage}</p>}
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label" htmlFor="username">
@@ -67,6 +74,7 @@ const RegistrationForm = () => {
                 value={data.username}
                 onChange={handleChange}
               />
+              {errors.username && <p className="text-danger">{errors.username}</p>}
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="email">
@@ -80,6 +88,7 @@ const RegistrationForm = () => {
                 value={data.email}
                 onChange={handleChange}
               />
+               {errors.email && <p className="text-danger">{errors.email}</p>}
             </div>
             <div className="mb-3">
               <label className="form-label" htmlFor="password">
@@ -93,6 +102,7 @@ const RegistrationForm = () => {
                 value={data.password}
                 onChange={handleChange}
               />
+               {errors.password && <p className="text-danger">{errors.password}</p>}
             </div>
 
             <div className="mb-3">
@@ -110,8 +120,9 @@ const RegistrationForm = () => {
                 <option value="candidate">Candidate</option>
                 <option value="employer">Employer</option>
               </select>
+              {errors.role && <p className="text-danger">{errors.role}</p>}
             </div>
-            <button type="submit" className="btn btn-primary">
+            <button type="submit" className="btn btn-primary" onSubmit={()=>handleSubmit()}>
               Register
             </button>
             <br />
@@ -126,4 +137,4 @@ const RegistrationForm = () => {
   );
 };
 
-export default RegistrationForm;
+export default Register;

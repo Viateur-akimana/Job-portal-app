@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation} from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { LocationOn, Business, ChevronRight } from "@mui/icons-material";
 import Pagination from "../pagination/Pagination";
+import axios from "axios";
 import "../../assets/css/styles.css";
 
 const JobListingsPage = () => {
@@ -10,17 +11,15 @@ const JobListingsPage = () => {
   const [jobsPerPage] = useState(5);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(true);
-
   const location = useLocation();
-  // const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           "https://jobboard-0da3.onrender.com/api/jobs_finds"
         );
-        const data = await response.json();
+        const data = response.data;
 
         const filteredJobs = data.filter(
           (job) =>
@@ -36,10 +35,10 @@ const JobListingsPage = () => {
           setCurrentPage(location.state.currentPage);
         }
 
-        setLoading(false); // Set loading to false when jobs are loaded
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching job listings:", error);
-        setLoading(false); // Set loading to false in case of an error
+        setLoading(false);
       }
     };
 
@@ -54,15 +53,10 @@ const JobListingsPage = () => {
     setCurrentPage(pageNumber);
   };
 
-  // const handleGoBack = () => {
-  //   navigate(-1);
-  // };
-
   const handleSearch = (e) => {
     setSearchQuery(e.target.value);
   };
 
-  // Function to calculate the time difference for human-readable format
   const calculateTimeDifference = (createdAt) => {
     const currentTime = new Date();
     const postTime = new Date(createdAt);
@@ -82,6 +76,7 @@ const JobListingsPage = () => {
       return "just now";
     }
   };
+
   return (
     <div className="container mt-5">
       <h2 className="mb-4 margin-top">Explore Job Opportunities</h2>
@@ -106,7 +101,6 @@ const JobListingsPage = () => {
         <div>
           <div className="row">
             {currentJobs.map((job) => (
-              // Display the date when the job was posted
               <div key={job._id} className="col-md-6 mb-4">
                 <div className="card h-100 shadow">
                   <div className="card-body">
@@ -121,7 +115,7 @@ const JobListingsPage = () => {
                       <Business /> Type: {job.jobType}
                     </p>
                     <p className="card-text">
-                      <ChevronRight /> Salary: ₹ {job.salery}
+                      <ChevronRight /> Salary: $ {job.salary}
                     </p>
                     <p className="card-text">
                       <strong>Date Posted:</strong>{" "}
