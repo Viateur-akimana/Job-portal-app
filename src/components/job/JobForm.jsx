@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button , TextField,Select, MenuItem} from "@mui/material";
+import { Button, TextField, Select, MenuItem } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const JobForm = ({ employerId }) => {
+const JobForm = ({ employerId = null }) => {
   const [jobData, setJobData] = useState({
     title: "",
     description: "",
@@ -11,35 +11,32 @@ const JobForm = ({ employerId }) => {
     location: "",
     salary: "",
     jobType: "",
-    employerId: employerId,
+    // employerId: employerId,
   });
   const navigate = useNavigate();
 
   const [formError, setFormError] = useState("");
-  const [resumeFile, setResumeFile] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setJobData({ ...jobData, [name]: value });
-  };
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setResumeFile(file);
+    if (name !== "employerId") {
+      setJobData({ ...jobData, [name]: value });
+    }
   };
 
   const handleJobSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if any field is empty
-    for (const key in jobData) {
-      if (!jobData[key]) {
-        setFormError(`Please fill in all fields.`);
-        return;
-      }
-    }
-
+  
     try {
+      // Check for required fields
+      const requiredFields = ['title', 'description', 'company', 'location', 'jobType'];
+      for (const field of requiredFields) {
+        if (!jobData[field]) {
+          setFormError(`Please fill in all required fields.`);
+          return;
+        }
+      }
+  
       // Create a FormData object to handle file uploads
       const formData = new FormData();
       formData.append("title", jobData.title);
@@ -48,28 +45,35 @@ const JobForm = ({ employerId }) => {
       formData.append("location", jobData.location);
       formData.append("salary", jobData.salary);
       formData.append("jobType", jobData.jobType);
-      formData.append("employerId", jobData.employerId);
-      formData.append("resume", resumeFile);
-
+  
       // Send a POST request to your backend to create a new job
-      const response = await axios.post("http://localhost:3000/api/jobs/create", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
+      const response = await axios.post(
+        "http://localhost:3000/api/jobs/create",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+  
       if (!response.data) {
         throw new Error("Failed to create job");
       }
-
+  
+      // Display success message
+      // You can replace this with a Snackbar or other UI component
       alert("Job created successfully:", response.data);
+  
       // Redirect to job listings page or show a success message
-      navigate('/jobs');
+      navigate("/jobs");
     } catch (error) {
-      console.error("Error creating job:", error.message);
-      // Handle the error, show a message to the user, etc.
+      console.error("Error creating job:", error);
+      // Display error message to the user
+      setFormError("Failed to create job. Please try again.");
     }
   };
+  
 
   const handleGoBack = () => {
     navigate(-1); // Replace history.goBack() with navigate(-1)
@@ -91,8 +95,9 @@ const JobForm = ({ employerId }) => {
           value={jobData.title}
           onChange={handleInputChange}
           fullWidth
-          margin="normal"
+          margin="dense" // Change "normal" to "dense" or "none"
         />
+
         <TextField
           label="Description"
           variant="outlined"
@@ -100,7 +105,7 @@ const JobForm = ({ employerId }) => {
           value={jobData.description}
           onChange={handleInputChange}
           fullWidth
-          margin="normal"
+          margin="dense"
           multiline
         />
         <TextField
@@ -110,7 +115,7 @@ const JobForm = ({ employerId }) => {
           value={jobData.company}
           onChange={handleInputChange}
           fullWidth
-          margin="normal"
+          margin="dense"
         />
         <TextField
           label="Location"
@@ -119,7 +124,7 @@ const JobForm = ({ employerId }) => {
           value={jobData.location}
           onChange={handleInputChange}
           fullWidth
-          margin="normal"
+          margin="dense"
         />
         <TextField
           label="Salary"
@@ -137,20 +142,14 @@ const JobForm = ({ employerId }) => {
           value={jobData.jobType}
           onChange={handleInputChange}
           fullWidth
-          margin="normal"
+          margin="dense"
         >
           <MenuItem value="">-Select-</MenuItem>
           <MenuItem value="part-time">Part Time</MenuItem>
           <MenuItem value="full-time">Full Time</MenuItem>
           <MenuItem value="work-from-home">Work from Home</MenuItem>
         </Select>
-        <label>Resume:</label>
-        <input
-          type="file"
-          accept=".pdf,.doc,.docx"
-          name="resume"
-          onChange={handleFileChange}
-        />
+
         <Button type="submit" variant="contained" color="primary">
           Create Job
         </Button>

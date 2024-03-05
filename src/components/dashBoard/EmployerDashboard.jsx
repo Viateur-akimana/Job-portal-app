@@ -13,7 +13,7 @@ const EmployerDashboard = (props) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(``);
+        const response = await axios.get("http://localhost:3000/api/jobs");
         setJobs(response.data);
         setLoading(false);
       } catch (error) {
@@ -35,7 +35,7 @@ const EmployerDashboard = (props) => {
     }
 
     try {
-      await axios.delete(`https://jobboard-0da3.onrender.com/api/job/${jobId}`);
+      await axios.delete(`http://localhost:3000/api/jobs/${jobId}`);
       setJobs((prevJobs) => prevJobs.filter((job) => job._id !== jobId));
     } catch (error) {
       console.error("Error deleting job:", error.message);
@@ -66,11 +66,19 @@ const EmployerDashboard = (props) => {
               >
                 <ListItemText primary={job.title} />
               </Link>
+              <div>
+              <Edit
+                  style={{ cursor: "pointer", marginRight: "10px" }}
+                  className="text-primary"
+                  onClick={() => handleEditJob(job._id)}
+                />
               <Delete
                 style={{ cursor: "pointer" }}
                 className="text-danger"
                 onClick={() => handleDeleteJob(job._id)}
               />
+              </div>
+              
             </ListItem>
           ))}
         </List>
