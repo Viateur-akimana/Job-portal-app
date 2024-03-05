@@ -12,6 +12,7 @@ import JobList from "./components/job/JobList";
 import ApplyForm from "./components/job/ApplyForm";
 import JobForm from "./components/job/JobForm";
 import Navbar from "./components/layout/Navbar";
+import Contact from "./pages/contact";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route path="/job/:id" element={<JobDetail />} />
         <Route path="/post-job" element={<JobForm />} />
         <Route path="/apply/:id" element={<ApplyForm />} />
+        <Route path="/contact" element={<Contact/>} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

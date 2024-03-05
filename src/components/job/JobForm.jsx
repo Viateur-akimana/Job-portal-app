@@ -11,72 +11,50 @@ const JobForm = ({ employerId = null }) => {
     location: "",
     salary: "",
     jobType: "",
-    // employerId: employerId,
   });
   const navigate = useNavigate();
-
   const [formError, setFormError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    if (name !== "employerId") {
-      setJobData({ ...jobData, [name]: value });
-    }
+    setJobData({ ...jobData, [name]: value });
   };
 
   const handleJobSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
-      // Check for required fields
-      const requiredFields = ['title', 'description', 'company', 'location', 'jobType'];
-      for (const field of requiredFields) {
-        if (!jobData[field]) {
-          setFormError(`Please fill in all required fields.`);
-          return;
-        }
+
+    // Check for required fields
+    const requiredFields = ['title', 'description', 'company', 'location', 'jobType'];
+    for (const field of requiredFields) {
+      if (!jobData[field]) {
+        setFormError(`Please fill in all required fields.`);
+        return;
       }
-  
-      // Create a FormData object to handle file uploads
-      const formData = new FormData();
-      formData.append("title", jobData.title);
-      formData.append("description", jobData.description);
-      formData.append("company", jobData.company);
-      formData.append("location", jobData.location);
-      formData.append("salary", jobData.salary);
-      formData.append("jobType", jobData.jobType);
-  
-      // Send a POST request to your backend to create a new job
+    }
+
+    try {
       const response = await axios.post(
         "http://localhost:3000/api/jobs/create",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        jobData
       );
-  
+
       if (!response.data) {
         throw new Error("Failed to create job");
       }
-  
+
       // Display success message
-      // You can replace this with a Snackbar or other UI component
       alert("Job created successfully:", response.data);
-  
+
       // Redirect to job listings page or show a success message
-      navigate("/jobs");
+      navigate("/employer-dashboard");
     } catch (error) {
       console.error("Error creating job:", error);
-      // Display error message to the user
       setFormError("Failed to create job. Please try again.");
     }
   };
-  
 
   const handleGoBack = () => {
-    navigate(-1); // Replace history.goBack() with navigate(-1)
+    navigate(-1);
   };
 
   return (
@@ -88,7 +66,7 @@ const JobForm = ({ employerId = null }) => {
       <p>Your employerId during the Submission of Job is : {employerId}</p>
       {formError && <p style={{ color: "red" }}>{formError}</p>}
       <form onSubmit={handleJobSubmit}>
-        <TextField
+      <TextField
           label="Title"
           variant="outlined"
           name="title"

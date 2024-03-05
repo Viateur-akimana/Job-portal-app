@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Delete } from "@mui/icons-material";
+import { Delete, Edit } from "@mui/icons-material";
 import { CircularProgress, Container, List, ListItem, ListItemText, Button } from "@mui/material";
 import axios from "axios";
 
@@ -42,6 +42,24 @@ const EmployerDashboard = (props) => {
     }
   };
 
+  const handleEditJob = async (jobId) => {
+    try {
+      const response = await axios.put(`http://localhost:3000/api/jobs/${jobId}`);
+      setJobs((prevJobs) => {
+        const updatedJobs = [...prevJobs];
+        const index = updatedJobs.findIndex(job => job._id === jobId);
+        if (index !== -1) {
+          updatedJobs[index] = response.data;
+        }
+        return updatedJobs;
+      });
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching job:", error);
+      setLoading(false);
+    }
+  };
+
   return (
     <Container className="mt-5">
       <h2 className="mb-4">Your Posted Jobs</h2>
@@ -67,18 +85,17 @@ const EmployerDashboard = (props) => {
                 <ListItemText primary={job.title} />
               </Link>
               <div>
-              <Edit
+                <Edit
                   style={{ cursor: "pointer", marginRight: "10px" }}
                   className="text-primary"
                   onClick={() => handleEditJob(job._id)}
                 />
-              <Delete
-                style={{ cursor: "pointer" }}
-                className="text-danger"
-                onClick={() => handleDeleteJob(job._id)}
-              />
+                <Delete
+                  style={{ cursor: "pointer" }}
+                  className="text-danger"
+                  onClick={() => handleDeleteJob(job._id)}
+                />
               </div>
-              
             </ListItem>
           ))}
         </List>
