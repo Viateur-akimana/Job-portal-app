@@ -1,4 +1,5 @@
 import React from "react";
+import { Pagination as MuiPagination, PaginationItem } from "@mui/material";
 
 const Pagination = ({ jobsPerPage, totalJobs, paginate, currentPage }) => {
   const pageNumbers = [];
@@ -8,41 +9,23 @@ const Pagination = ({ jobsPerPage, totalJobs, paginate, currentPage }) => {
 
   return (
     <nav aria-label="Page navigation example">
-      <ul className="pagination d-flex justify-content-center">
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
-          <button
-            className="page-link"
-            onClick={() => paginate(currentPage - 1, currentPage)}
-          >
-            Previous
-          </button>
-        </li>
-        {pageNumbers.map((number) => (
-          <li
-            key={number}
-            className={`page-item ${currentPage === number ? "active" : ""}`}
-          >
-            <button
-              onClick={() => paginate(number, currentPage)}
-              className="page-link"
-            >
-              {number}
-            </button>
-          </li>
-        ))}
-        <li
-          className={`page-item ${
-            currentPage === Math.ceil(totalJobs / jobsPerPage) ? "disabled" : ""
-          }`}
-        >
-          <button
-            className="page-link"
-            onClick={() => paginate(currentPage + 1, currentPage)}
-          >
-            Next
-          </button>
-        </li>
-      </ul>
+      <MuiPagination
+        page={currentPage}
+        count={Math.ceil(totalJobs / jobsPerPage)}
+        variant="outlined"
+        shape="rounded"
+        onChange={(event, page) => paginate(page)}
+        sx={{ justifyContent: 'center', mt: 2 }}
+        renderItem={(item) => (
+          <PaginationItem
+            component="li"
+            page={item.page}
+            disabled={item.disabled}
+            onClick={() => paginate(item.page)}
+            {...item}
+          />
+        )}
+      />
     </nav>
   );
 };

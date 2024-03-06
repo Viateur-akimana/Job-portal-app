@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { LocationOn, Business, ChevronRight } from "@mui/icons-material";
 import Pagination from "../pagination/Pagination";
 import axios from "axios";
+import { Container, Typography, TextField, CircularProgress, Grid, Card, CardContent, Button } from "@mui/material";
 import "../../assets/css/styles.css";
 
 const JobListingsPage = () => {
@@ -16,9 +17,7 @@ const JobListingsPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://jobboard-0da3.onrender.com/api/jobs_finds"
-        );
+        const response = await axios.get("http://localhost:3000/api/jobs");
         const data = response.data;
 
         const filteredJobs = data.filter(
@@ -78,64 +77,52 @@ const JobListingsPage = () => {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="mb-4 margin-top">Explore Job Opportunities</h2>
+    <Container sx={{ mt: 5 }}>
+      <Typography variant="h4" mb={4}>Explore Job Opportunities</Typography>
 
-      <div className="mb-4">
-        <input
-          type="text"
-          placeholder="Search by title, company, or location"
-          value={searchQuery}
-          onChange={handleSearch}
-          className="form-control"
-        />
-      </div>
+      <TextField
+        type="text"
+        placeholder="Search by title, company, or location"
+        value={searchQuery}
+        onChange={handleSearch}
+        fullWidth
+        mb={4}
+      />
 
       {loading ? (
-        <div className="text-center">
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
-          </div>
-        </div>
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
       ) : (
         <div>
-          <div className="row">
+          <Grid container spacing={4}>
             {currentJobs.map((job) => (
-              <div key={job._id} className="col-md-6 mb-4">
-                <div className="card h-100 shadow">
-                  <div className="card-body">
-                    <h3 className="card-title">{job.title}</h3>
-                    <p className="card-subtitle mb-2 text-muted">
-                      {job.company}
-                    </p>
-                    <p className="card-text">
-                      <LocationOn /> Location: {job.location}
-                    </p>
-                    <p className="card-text">
-                      <Business /> Type: {job.jobType}
-                    </p>
-                    <p className="card-text">
-                      <ChevronRight /> Salary: $ {job.salary}
-                    </p>
-                    <p className="card-text">
-                      <strong>Date Posted:</strong>{" "}
-                      {calculateTimeDifference(job.createdAt)}
-                    </p>
-
-                    <Link
+              <Grid key={job._id} item xs={12} sm={6}>
+                <Card elevation={3}>
+                  <CardContent>
+                    <Typography variant="h5" mb={1}>{job.title}</Typography>
+                    <Typography variant="subtitle1" mb={1}>{job.company}</Typography>
+                    <Typography variant="body1" mb={1}><LocationOn /> Location: {job.location}</Typography>
+                    <Typography variant="body1" mb={1}><Business /> Type: {job.jobType}</Typography>
+                    <Typography variant="body1" mb={1}><ChevronRight /> Salary: $ {job.salary}</Typography>
+                    <Typography variant="body1"><strong>Date Posted:</strong> {calculateTimeDifference(job.createdAt)}</Typography>
+                    <Button
+                      component={Link}
                       to={{
                         pathname: `/jobs/${job._id}`,
                         state: { currentPage },
                       }}
-                      className="btn btn-primary"
+                      variant="contained"
+                      color="primary"
+                      mt={2}
                     >
-                      View Details <ChevronRight />
-                    </Link>
-                  </div>
-                </div>
-              </div>
+                      View Details
+                    </Button>
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </div>
+          </Grid>
 
           <Pagination
             jobsPerPage={jobsPerPage}
@@ -145,8 +132,8 @@ const JobListingsPage = () => {
           />
         </div>
       )}
-    </div>
+    </Container>
   );
 };
 
-export default JobListingsPage;
+export default JobListingsPage
