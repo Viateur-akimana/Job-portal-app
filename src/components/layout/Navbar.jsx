@@ -28,7 +28,7 @@ const Navbar = () => {
                                 Job Board
                             </Link>
                         </Grid>
-                        <Grid item xs={12} sm={6} container justifyContent="center" spacing={3}>
+                        <Grid item xs={12} sm={6} container justifyContent="center" spacing={3} sx={{ display: { xs: "none", md: "flex" }}}>
                             <Grid item>
                                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
                                     <Button color="inherit">Home</Button>
@@ -56,7 +56,7 @@ const Navbar = () => {
                                 </Link>
                             </Grid>
                         </Grid>
-                        <Grid item xs={12} sm={3} container justifyContent="flex-end">
+                        <Grid item xs={12} sm={3} container justifyContent="flex-end" sx={{ display: { xs: "none", md: "flex" }}} >
                             <Link to="/login" style={{ textDecoration: 'none' }}>
                                 <Button color="inherit" onClick={() => navigate('/login')}>Login</Button>
                             </Link>
