@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,9 +6,21 @@ import IconButton from '@mui/material/IconButton';
 import SearchIcon from '@mui/icons-material/Search';
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
+import MenuIcon from '@mui/icons-material/Menu';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const [menuOpen, setMenuOpen] = useState(false);
+
+    const handleMenuOpen = () => {
+        setMenuOpen(true);
+    };
+
+    const handleMenuClose = () => {
+        setMenuOpen(false);
+    };
 
     const handleButtonClick = () => {
         // Handle button click
@@ -36,7 +48,6 @@ const Navbar = () => {
                             </Grid>
                             <Grid item>
                                 <Link to="/jobs" style={{ textDecoration: 'none', color: 'inherit' }}>
-                                    
                                     <Button color="inherit">Browse Jobs</Button>
                                 </Link>
                             </Grid>
@@ -64,11 +75,50 @@ const Navbar = () => {
                                 <Button variant="contained" color="success" onClick={handleButtonClick}>Post a Job</Button>
                             </Link>
                         </Grid>
+                        <Grid item xs={12} sx={{ display: { xs: "flex", md: "none" },justifyContent: 'flex-end'}} >
+                            <IconButton color="inherit" onClick={handleMenuOpen}>
+                                <MenuIcon />
+                            </IconButton>
+                            <Menu
+                                 anchorOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                transformOrigin={{
+                                    vertical: 'top',
+                                    horizontal: 'right',
+                                }}
+                                anchorEl={menuOpen}
+                                open={Boolean(menuOpen)}
+                                onClose={handleMenuClose}
+                            >
+                                <MenuItem onClick={handleMenuClose}>
+                                    <Link to="/jobs" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        Jobs
+                                    </Link>
+                                </MenuItem>
+                                <MenuItem onClick={handleMenuClose}>
+                                    <Link to="/candidate-dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        Candidate
+                                    </Link>
+                                </MenuItem>
+                                <MenuItem onClick={handleMenuClose}>
+                                    <Link to="/employer-dashboard" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        Employee
+                                    </Link>
+                                </MenuItem>
+                                <MenuItem onClick={handleMenuClose}>
+                                    <Link to="/login" style={{ textDecoration: 'none', color: 'inherit' }}>
+                                        Login
+                                    </Link>
+                                </MenuItem>
+                            </Menu>
+                        </Grid>
                     </Grid>
                 </Toolbar>
-            </AppBar>
+            </AppBar>   
         </div>
     );
 };
-
+    
 export default Navbar;
