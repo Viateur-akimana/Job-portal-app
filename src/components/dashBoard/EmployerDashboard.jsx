@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { CircularProgress, Container, List, ListItem, ListItemText, Button, Typography, IconButton } from "@mui/material";
 import { Delete, Edit } from "@mui/icons-material";
-import { CircularProgress, Container, List, ListItem, ListItemText, Button } from "@mui/material";
 import axios from "axios";
 
-const EmployerDashboard = (props) => {
-  const { employerId } = props;
-
+const EmployerDashboard = ({ employerId }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,8 +59,8 @@ const EmployerDashboard = (props) => {
   };
 
   return (
-    <Container className="mt-5">
-      <h2 className="mb-4">Your Posted Jobs</h2>
+    <Container maxWidth="md" className="mt-5">
+      <Typography variant="h4" gutterBottom mb={4}>Your Posted Jobs</Typography>
       {loading ? (
         <>
           <div className="alert alert-info">Loading Jobs... </div>
@@ -71,42 +69,36 @@ const EmployerDashboard = (props) => {
           </div>
         </>
       ) : (
-        <List className="mb-4">
+        <List>
           {jobs.map((job) => (
             <ListItem
               key={job._id}
               disablePadding
-              className="d-flex justify-content-between align-items-center"
+              sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', py: 2 }}
             >
-              <Link
-                to={`/employer-dashboard/${employerId}/${job._id}/applications`}
-                className="text-decoration-none"
-              >
-                <ListItemText primary={job.title} />
-              </Link>
               <div>
-                <Edit
-                  style={{ cursor: "pointer", marginRight: "10px" }}
-                  className="text-primary"
-                  onClick={() => handleEditJob(job._id)}
+                <ListItemText
+                  primary={<Typography variant="h6">{job.title}</Typography>}
+                  secondary={<Typography variant="subtitle2"> {job.jobType}</Typography>}
                 />
-                <Delete
-                  style={{ cursor: "pointer" }}
-                  className="text-danger"
-                  onClick={() => handleDeleteJob(job._id)}
-                />
+              </div>
+              <div>
+                <IconButton onClick={() => handleEditJob(job._id)}>
+                  <Edit color="primary" />
+                </IconButton>
+                <IconButton onClick={() => handleDeleteJob(job._id)}>
+                  <Delete color="error" />
+                </IconButton>
               </div>
             </ListItem>
           ))}
         </List>
       )}
 
-      <h2 className="mb-4">Post Your Jobs</h2>
+      <Typography variant="h4" className="mb-4">Post Your Jobs</Typography>
       {loading ? (
         <>
-          <div className="alert alert-info">
-            Loading Jobs Posting Features...
-          </div>
+          <div className="alert alert-info">Loading Jobs Posting Features...</div>
           <div className="text-center">
             <CircularProgress />
           </div>

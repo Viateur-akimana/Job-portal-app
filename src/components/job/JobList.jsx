@@ -109,7 +109,7 @@ const JobListingsPage = () => {
                     <Button
                       component={Link}
                       to={{
-                        pathname: `/jobs/${job._id}`,
+                        pathname: `/job/${job._id}`, // Changed pathname
                         state: { currentPage },
                       }}
                       variant="contained"
@@ -136,4 +136,4 @@ const JobListingsPage = () => {
   );
 };
 
-export default JobListingsPage
+export default JobListingsPage;

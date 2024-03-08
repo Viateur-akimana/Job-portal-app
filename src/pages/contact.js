@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField } from "@mui/material";
+import { Container, Typography, TextField, Button, Grid } from "@mui/material";
 import axios from "axios";
 
 const Contact = () => {
@@ -44,46 +44,66 @@ const Contact = () => {
   };
 
   return (
-    <div className="container margin-top">
-      <h2>Contact Us</h2>
-      {formSuccess && <p style={{ color: "green" }}>Message sent successfully!</p>}
-      {formError && <p style={{ color: "red" }}>{formError}</p>}
+    <Container maxWidth="sm" className="container margin-top">
+      <Typography variant="h4" gutterBottom>
+        Contact Us
+      </Typography>
+      {formSuccess && (
+        <Typography variant="body1" style={{ color: "green", marginBottom: 10 }}>
+          Message sent successfully!
+        </Typography>
+      )}
+      {formError && (
+        <Typography variant="body1" style={{ color: "red", marginBottom: 10 }}>
+          {formError}
+        </Typography>
+      )}
       <form onSubmit={handleSubmit}>
-        <TextField
-          label="Name"
-          variant="outlined"
-          name="name"
-          value={formData.name}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-        />
-        <TextField
-          label="Email"
-          variant="outlined"
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-        />
-        <TextField
-          label="Message"
-          variant="outlined"
-          multiline
-          rows={4}
-          name="message"
-          value={formData.message}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-        />
-        <Button type="submit" variant="contained" color="primary">
-          Send Message
-        </Button>
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TextField
+              label="Name"
+              variant="outlined"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Email"
+              variant="outlined"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              label="Message"
+              variant="outlined"
+              multiline
+              rows={4}
+              name="message"
+              value={formData.message}
+              onChange={handleInputChange}
+              fullWidth
+              required
+            />
+          </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary" fullWidth>
+              Send Message
+            </Button>
+          </Grid>
+        </Grid>
       </form>
-    </div>
+    </Container>
   );
 };
 

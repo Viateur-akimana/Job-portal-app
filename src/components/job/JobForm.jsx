@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, TextField, Select, MenuItem } from "@mui/material";
+import { Button, TextField, Select, MenuItem, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -58,81 +58,98 @@ const JobForm = ({ employerId = null }) => {
   };
 
   return (
-    <div className="container margin-top">
-      <Button variant="contained" color="primary" onClick={handleGoBack}>
-        Back
-      </Button>
-      <h3>Create a New Job</h3>
-      <p>Your employerId during the Submission of Job is : {employerId}</p>
-      {formError && <p style={{ color: "red" }}>{formError}</p>}
-      <form onSubmit={handleJobSubmit}>
-      <TextField
-          label="Title"
-          variant="outlined"
-          name="title"
-          value={jobData.title}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense" // Change "normal" to "dense" or "none"
-        />
-
-        <TextField
-          label="Description"
-          variant="outlined"
-          name="description"
-          value={jobData.description}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-          multiline
-        />
-        <TextField
-          label="Company"
-          variant="outlined"
-          name="company"
-          value={jobData.company}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-        />
-        <TextField
-          label="Location"
-          variant="outlined"
-          name="location"
-          value={jobData.location}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-        />
-        <TextField
-          label="Salary"
-          variant="outlined"
-          name="salary"
-          value={jobData.salary}
-          onChange={handleInputChange}
-          fullWidth
-          margin="normal"
-        />
-        <Select
-          label="Job Type"
-          variant="outlined"
-          name="jobType"
-          value={jobData.jobType}
-          onChange={handleInputChange}
-          fullWidth
-          margin="dense"
-        >
-          <MenuItem value="">-Select-</MenuItem>
-          <MenuItem value="part-time">Part Time</MenuItem>
-          <MenuItem value="full-time">Full Time</MenuItem>
-          <MenuItem value="work-from-home">Work from Home</MenuItem>
-        </Select>
-
-        <Button type="submit" variant="contained" color="primary">
-          Create Job
+    <Grid container spacing={4} justifyContent="center">
+      <Grid item xs={12} md={10} lg={8}>
+        <Button variant="contained" color="primary" onClick={handleGoBack}>
+          Back
         </Button>
-      </form>
-    </div>
+        <Typography variant="h4" gutterBottom>
+          Create a New Job
+        </Typography>
+    
+        {formError && <Typography variant="body1" style={{ color: "red" }}>{formError}</Typography>}
+        <form onSubmit={handleJobSubmit}>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <TextField
+                label="Title"
+                variant="outlined"
+                name="title"
+                value={jobData.title}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label="Description"
+                variant="outlined"
+                name="description"
+                value={jobData.description}
+                onChange={handleInputChange}
+                fullWidth
+                required
+                multiline
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Company"
+                variant="outlined"
+                name="company"
+                value={jobData.company}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Location"
+                variant="outlined"
+                name="location"
+                value={jobData.location}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Salary"
+                variant="outlined"
+                name="salary"
+                value={jobData.salary}
+                onChange={handleInputChange}
+                fullWidth
+              />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <Select
+                label="Job Type"
+                variant="outlined"
+                name="jobType"
+                value={jobData.jobType}
+                onChange={handleInputChange}
+                fullWidth
+                required
+              >
+                <MenuItem value="">-Select-</MenuItem>
+                <MenuItem value="part-time">Part Time</MenuItem>
+                <MenuItem value="full-time">Full Time</MenuItem>
+                <MenuItem value="work-from-home">Work from Home</MenuItem>
+              </Select>
+            </Grid>
+            <Grid item xs={12}>
+              <Button type="submit" variant="contained" color="primary" fullWidth>
+                Create Job
+              </Button>
+            </Grid>
+          </Grid>
+        </form>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -1,13 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import "../../assets/css/styles.css";
+import { Container, Typography, Grid, Paper, Button } from "@mui/material";
+import { makeStyles } from "@mui/styles";
+
+const useStyles = makeStyles((theme) => ({
+  container: {
+    marginTop: theme.spacing(4),
+  },
+  paper: {
+    padding: theme.spacing(3),
+    marginBottom: theme.spacing(3),
+  },
+  jobItem: {
+    marginBottom: theme.spacing(3), // Adjust the spacing here
+    padding: theme.spacing(2),
+    "&:last-child": {
+      marginBottom: 0, // Remove margin for the last item
+    },
+  },
+}));
 
 const CandidateDashboard = ({ name }) => {
+  const classes = useStyles();
   const [profile, setProfile] = useState({});
   const [jobs, setJobs] = useState([]);
-  const [resumeFile, setResumeFile] = useState(null);
-  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -32,66 +49,55 @@ const CandidateDashboard = ({ name }) => {
     fetchJobs();
   }, []);
 
-  const handleFileChange = (e) => {
-    setResumeFile(e.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    if (!resumeFile) {
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("resume", resumeFile);
-
-    try {
-      const response = await axios.post("http://localhost:3000/api/jobs/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.data.fileName) {
-        setUploadSuccess(true);
-      }
-    } catch (error) {
-      console.error("Error uploading resume:", error);
-    }
-  };
-
   return (
-    <div className="container margin-top">
-      <h2>Welcome, {name}!</h2>
+    <Container className={classes.container}>
+      <Typography variant="h2" gutterBottom>
+        Welcome, {name}!
+      </Typography>
 
-      <h3>Your Profile</h3>
-      <p>Email: {profile.email}</p>
-      <p>Skills: {profile.skills}</p>
+      <Paper className={classes.paper}>
+        <Typography variant="h4" gutterBottom>
+          Your Profile
+        </Typography>
+        <Typography variant="body1">Email: {profile.email}</Typography>
+        <Typography variant="body1">Skills: {profile.skills}</Typography>
+      </Paper>
 
-      <h3>Job Applications</h3>
-      {profile.applications && profile.applications.length > 0 ? (
-        <ul>
-          {profile.applications.map((application) => (
-            <li key={application.jobId}>Applied for: {application.jobTitle}</li>
+      <Paper className={classes.paper}>
+        <Typography variant="h4" gutterBottom>
+          Job Applications
+        </Typography>
+        {profile.applications && profile.applications.length > 0 ? (
+          <ul>
+            {profile.applications.map((application) => (
+              <li key={application.jobId}>Applied for: {application.jobTitle}</li>
+            ))}
+          </ul>
+        ) : (
+          <Typography variant="body1">No job applications yet.</Typography>
+        )}
+      </Paper>
+
+      <Paper className={classes.paper}>
+        <Typography variant="h4" gutterBottom>
+          Available Jobs
+        </Typography>
+        <Grid container spacing={2}>
+          {jobs.map((job) => (
+            <Grid item xs={12} md={6} key={job._id}>
+              <Paper className={classes.jobItem} elevation={2}>
+                <Typography variant="h5">{job.title}</Typography>
+                <Typography variant="body1">Company: {job.company}</Typography>
+                <Typography variant="body1">Salary: ${job.salary}</Typography>
+                <Button variant="contained" component={Link} to={`/apply/${job._id}`} color="primary">
+                  Apply Now
+                </Button>
+              </Paper>
+            </Grid>
           ))}
-        </ul>
-      ) : (
-        <p>No job applications yet.</p>
-      )}
-
-      <h3>Available Jobs</h3>
-      <ul>
-        {jobs.map((job) => (
-          <li key={job._id}>
-            {job.title} - <Link to={`/apply/${job._id}`}>Apply Now</Link>
-          </li>
-        ))}
-      </ul>
-
-      <h3>Upload Resume</h3>
-      <input type="file" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
-      {uploadSuccess && <p>Resume uploaded successfully!</p>}
-    </div>
+        </Grid>
+      </Paper>
+    </Container>
   );
 };
 
