@@ -13,10 +13,11 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(3),
   },
   jobItem: {
-    marginBottom: theme.spacing(3), // Adjust the spacing here
+    marginBottom: theme.spacing(3), 
+    
     padding: theme.spacing(2),
     "&:last-child": {
-      marginBottom: 0, // Remove margin for the last item
+      marginBottom: 0, 
     },
   },
 }));

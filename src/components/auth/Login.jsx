@@ -9,7 +9,7 @@ const Login = ({ onLogin }) => {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission
+    e.preventDefault(); 
   
     try {
       const response = await axios.post('http://localhost:3000/api/auth/login', {
